@@ -51,13 +51,21 @@
 
                 const scaledViewport = page.getViewport({ scale });
 
+                // Adjust for device pixel ratio
+                const dpr = window.devicePixelRatio || 1;
+
                 // Create a canvas for each page
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
 
-                // Set canvas dimensions to match the scaled PDF page size
-                canvas.width = scaledViewport.width;
-                canvas.height = scaledViewport.height;
+                // Set canvas dimensions to match the scaled PDF page size, considering device pixel ratio
+                canvas.width = scaledViewport.width * dpr;
+                canvas.height = scaledViewport.height * dpr;
+                canvas.style.width = `${scaledViewport.width}px`; // CSS width
+                canvas.style.height = `${scaledViewport.height}px`; // CSS height
+
+                // Scale the canvas context to account for the device pixel ratio
+                context.scale(dpr, dpr);
 
                 // Append canvas to the container
                 container.appendChild(canvas);
@@ -81,3 +89,4 @@
     </script>
 </body>
 </html>
+
