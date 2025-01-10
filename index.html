@@ -19,7 +19,7 @@
         }
         #pdf-container {
             width: 100%;
-            height: 100%;
+            height: 90%; /* Adjust height to make room for the download link */
             overflow-y: auto;
             background-color: #f0f0f0; /* Light background for readability */
         }
@@ -34,6 +34,7 @@
             font-size: 16px;
             color: #007BFF;
             text-decoration: none;
+            cursor: pointer;
         }
         #download-link:hover {
             text-decoration: underline;
@@ -41,12 +42,13 @@
     </style>
 </head>
 <body>
-    <a id="download-link" href="https://rafikmeg.github.io/resume-public/CV_RM_2025.pdf" download="CV_RM_2025.pdf">Download PDF</a>
+    <a id="download-link">Download PDF</a>
     <div id="pdf-container"></div>
 
     <script>
         const pdfUrl = 'https://rafikmeg.github.io/resume-public/CV_RM_2025.pdf';
         const container = document.getElementById('pdf-container');
+        const downloadLink = document.getElementById('download-link');
 
         const renderPDF = async (url) => {
             const pdf = await pdfjsLib.getDocument(url).promise;
@@ -96,7 +98,24 @@
             container.innerHTML = ''; // Clear existing content
             renderPDF(pdfUrl); // Re-render with updated scale
         });
+
+        // Add mobile-friendly download functionality
+        downloadLink.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            fetch(pdfUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'CV_RM_2025.pdf'; // Suggested file name
+                    document.body.appendChild(a); // Append anchor to body
+                    a.click(); // Trigger download
+                    document.body.removeChild(a); // Clean up
+                    window.URL.revokeObjectURL(url); // Release the URL
+                })
+                .catch(error => console.error('Error downloading the PDF:', error));
+        });
     </script>
 </body>
 </html>
-
